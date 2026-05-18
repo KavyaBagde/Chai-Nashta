@@ -1,4 +1,4 @@
-# 🍔 FoodieGo - React Native Food Delivery App
+# 🍔 Chai Nashta - React Native Food Delivery App
 
 A modern and fully functional **Food Delivery Mobile Application UI** built using **React Native + Expo + React Navigation**.
 
