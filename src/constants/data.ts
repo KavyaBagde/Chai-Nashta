@@ -49,7 +49,8 @@ export const restaurants: Restaurant[] = [
   {
     id: "103",
     name: "Biryani House",
-    image: "https://images.unsplash.com/photo-1563379091339-03246963d96c?w=900",
+    image:
+      "https://images.unsplash.com/photo-1705174299330-939dd03cc864?q=80&w=687&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
     rating: 4.6,
     time: "30 min",
     price: 179,
@@ -148,7 +149,8 @@ export const foodItems: FoodItem[] = [
     name: "Chicken Biryani",
     description: "Aromatic rice cooked with chicken, spices and fried onions.",
     price: 249,
-    image: "https://images.unsplash.com/photo-1563379091339-03246963d96c?w=900",
+    image:
+      "https://images.unsplash.com/photo-1589302168068-964664d93dc0?q=80&w=687&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
     rating: 4.8,
     category: "Biryani",
     restaurantId: "106",

@@ -139,5 +139,6 @@ const styles = StyleSheet.create({
   },
   versionCard: {
     marginTop: 10,
+    padding: 16,
   },
 });

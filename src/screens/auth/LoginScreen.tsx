@@ -27,14 +27,14 @@ const LoginScreen = () => {
   return (
     <KeyboardAvoidingView
       style={globalStyles.screen}
-      behavior={Platform.OS === "ios" ? "padding" : undefined}
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
     >
       <View style={styles.container}>
         <View style={styles.logoWrapper}>
           <View style={styles.logoCircle}>
             <Ionicons name="fast-food" size={42} color={COLORS.surface} />
           </View>
-          <Text style={styles.appName}>FoodieGo</Text>
+          <Text style={styles.appName}>Chai Nashta</Text>
           <Text style={styles.subtitle}>
             Login to order your favorite meals faster.
           </Text>
