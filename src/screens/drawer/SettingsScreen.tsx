@@ -6,26 +6,34 @@ import { TYPOGRAPHY } from "../../styles/typography";
 import { globalStyles } from "../../styles/globalStyles";
 
 const SettingsScreen = () => {
-  const [notificationsEnabled, setNotificationsEnabled] = useState(true);
+  const [notifications, setNotifications] = useState(true);
+  const [offers, setOffers] = useState(false);
+  const [darkMode, setDarkMode] = useState(false);
 
-  const settingItems = [
+  const settings = [
     {
       id: "1",
-      title: "Delivery Address",
-      subtitle: "Manage saved addresses",
-      icon: "location-outline",
+      title: "Push Notifications",
+      subtitle: "Receive order updates instantly",
+      icon: "notifications-outline",
+      value: notifications,
+      onChange: setNotifications,
     },
     {
       id: "2",
-      title: "Payment Methods",
-      subtitle: "Cards, UPI and wallets",
-      icon: "card-outline",
+      title: "Offers & Discounts",
+      subtitle: "Get promo and coupon alerts",
+      icon: "pricetag-outline",
+      value: offers,
+      onChange: setOffers,
     },
     {
       id: "3",
-      title: "App Theme",
-      subtitle: "Light mode",
-      icon: "color-palette-outline",
+      title: "Dark Mode",
+      subtitle: "Coming soon UI preference",
+      icon: "moon-outline",
+      value: darkMode,
+      onChange: setDarkMode,
     },
   ];
 
@@ -33,61 +41,45 @@ const SettingsScreen = () => {
     <View style={globalStyles.screen}>
       <View style={styles.container}>
         <Text style={styles.title}>Settings</Text>
-        <Text style={styles.subtitle}>Manage your app preferences.</Text>
+        <Text style={styles.subtitle}>Control your food app preferences.</Text>
 
-        <View style={[globalStyles.card, styles.notificationCard]}>
-          <View style={styles.settingLeft}>
-            <View style={styles.iconBox}>
-              <Ionicons
-                name="notifications-outline"
-                size={22}
-                color={COLORS.primary}
-              />
-            </View>
-
-            <View>
-              <Text style={styles.settingTitle}>Notifications</Text>
-              <Text style={styles.settingSubtitle}>Order updates and offers</Text>
-            </View>
-          </View>
-
-          <Switch
-            value={notificationsEnabled}
-            onValueChange={setNotificationsEnabled}
-            thumbColor={COLORS.surface}
-            trackColor={{
-              false: COLORS.border,
-              true: COLORS.primary,
-            }}
-          />
-        </View>
-
-        <View style={styles.list}>
-          {settingItems.map((item) => (
-            <Pressable key={item.id} style={[globalStyles.card, styles.itemCard]}>
-              <View style={styles.settingLeft}>
-                <View style={styles.iconBox}>
-                  <Ionicons
-                    name={item.icon as keyof typeof Ionicons.glyphMap}
-                    size={22}
-                    color={COLORS.primary}
-                  />
-                </View>
-
-                <View>
-                  <Text style={styles.settingTitle}>{item.title}</Text>
-                  <Text style={styles.settingSubtitle}>{item.subtitle}</Text>
-                </View>
+        {settings.map((item) => (
+          <View key={item.id} style={[globalStyles.card, styles.card]}>
+            <View style={styles.left}>
+              <View style={styles.iconBox}>
+                <Ionicons
+                  name={item.icon as keyof typeof Ionicons.glyphMap}
+                  size={22}
+                  color={COLORS.primary}
+                />
               </View>
 
-              <Ionicons
-                name="chevron-forward"
-                size={20}
-                color={COLORS.textMuted}
-              />
-            </Pressable>
-          ))}
-        </View>
+              <View style={styles.textBox}>
+                <Text style={styles.settingTitle}>{item.title}</Text>
+                <Text style={styles.settingSubtitle}>{item.subtitle}</Text>
+              </View>
+            </View>
+
+            <Switch
+              value={item.value}
+              onValueChange={item.onChange}
+              thumbColor={COLORS.surface}
+              trackColor={{
+                false: COLORS.border,
+                true: COLORS.primary,
+              }}
+            />
+          </View>
+        ))}
+
+        <Pressable style={[globalStyles.card, styles.versionCard]}>
+          <View>
+            <Text style={styles.settingTitle}>App Version</Text>
+            <Text style={styles.settingSubtitle}>FoodieGo v1.0.0</Text>
+          </View>
+
+          <Ionicons name="information-circle-outline" size={24} color={COLORS.primary} />
+        </Pressable>
       </View>
     </View>
   );
@@ -98,7 +90,7 @@ export default SettingsScreen;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingHorizontal: 20,
+    padding: 20,
     paddingTop: 54,
   },
   title: {
@@ -109,46 +101,43 @@ const styles = StyleSheet.create({
     ...TYPOGRAPHY.body,
     color: COLORS.textLight,
     marginTop: 6,
-    marginBottom: 26,
+    marginBottom: 24,
   },
-  notificationCard: {
+  card: {
     padding: 16,
+    marginBottom: 14,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
   },
-  list: {
-    marginTop: 16,
-    gap: 14,
-  },
-  itemCard: {
-    padding: 16,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-  },
-  settingLeft: {
+  left: {
     flexDirection: "row",
     alignItems: "center",
     flex: 1,
   },
   iconBox: {
-    width: 42,
-    height: 42,
-    borderRadius: 14,
+    width: 46,
+    height: 46,
+    borderRadius: 15,
     backgroundColor: "#FFE8DD",
     alignItems: "center",
     justifyContent: "center",
     marginRight: 12,
   },
+  textBox: {
+    flex: 1,
+  },
   settingTitle: {
     ...TYPOGRAPHY.body,
     color: COLORS.text,
-    fontWeight: "800",
+    fontWeight: "900",
   },
   settingSubtitle: {
     ...TYPOGRAPHY.bodySmall,
     color: COLORS.textLight,
-    marginTop: 2,
+    marginTop: 3,
+  },
+  versionCard: {
+    marginTop: 10,
   },
 });

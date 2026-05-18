@@ -1,8 +1,12 @@
 import React from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
+
 import HomeScreen from "../screens/home/HomeScreen";
 import RestaurantDetailScreen from "../screens/home/RestaurantDetailScreen";
 import CartScreen from "../screens/home/CartScreen";
+import AllRestaurantsScreen from "../screens/home/AllRestaurantsScreen";
+import ItemDetailScreen from "../screens/home/ItemDetailScreen";
+
 import { RestaurantStackParamList } from "../types/navigation";
 import { ROUTES } from "../constants/routes";
 import { COLORS } from "../constants/colors";
@@ -37,12 +41,30 @@ const RestaurantStackNavigator = () => {
       />
 
       <Stack.Screen
+        name={ROUTES.ALL_RESTAURANTS}
+        component={AllRestaurantsScreen}
+        options={{
+          title: "All Restaurants",
+        }}
+      />
+
+      <Stack.Screen
         name={ROUTES.RESTAURANT_DETAIL}
         component={RestaurantDetailScreen}
         options={({ route }) => ({
           title: route.params?.restaurantName || "Restaurant",
           headerBackTitle: "Back",
         })}
+      />
+
+      <Stack.Screen
+        name={ROUTES.ITEM_DETAIL}
+        component={ItemDetailScreen}
+        options={{
+          title: "Item Detail",
+          headerShown: false,
+          animation: "slide_from_right",
+        }}
       />
 
       <Stack.Screen

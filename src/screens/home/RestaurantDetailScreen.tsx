@@ -5,10 +5,11 @@ import { NativeStackScreenProps } from "@react-navigation/native-stack";
 
 import { COLORS } from "../../constants/colors";
 import { ROUTES } from "../../constants/routes";
-import { menuItems, restaurants } from "../../constants/data";
+import { foodItems, restaurants } from "../../constants/data";
+import { RestaurantStackParamList } from "../../types/navigation";
 import { TYPOGRAPHY } from "../../styles/typography";
 import { globalStyles } from "../../styles/globalStyles";
-import { RestaurantStackParamList } from "../../types/navigation";
+import { useCart } from "../../context/CartContext";
 
 import MenuItemCard from "../../components/MenuItemCard";
 import CustomButton from "../../components/CustomButton";
@@ -20,17 +21,14 @@ type Props = NativeStackScreenProps<
 
 const RestaurantDetailScreen = ({ route, navigation }: Props) => {
   const { restaurantId, restaurantName, price } = route.params;
+  const { addToCart, cartCount } = useCart();
 
   const restaurant =
     restaurants.find((item) => item.id === restaurantId) || restaurants[0];
 
-  const handleAddToCart = () => {
-    console.log("Item added to cart");
-  };
-
-  const handleGoToCart = () => {
-    navigation.navigate(ROUTES.CART);
-  };
+  const restaurantMenu = foodItems.filter(
+    (item) => item.restaurantId === restaurantId
+  );
 
   return (
     <View style={globalStyles.screen}>
@@ -52,6 +50,8 @@ const RestaurantDetailScreen = ({ route, navigation }: Props) => {
             <Text style={styles.metaText}>Starting ₹{price}</Text>
           </View>
 
+          <Text style={styles.address}>{restaurant.address}</Text>
+
           <View style={styles.offerCard}>
             <Ionicons name="pricetag" size={20} color={COLORS.primary} />
             <Text style={styles.offerText}>
@@ -61,21 +61,30 @@ const RestaurantDetailScreen = ({ route, navigation }: Props) => {
 
           <Text style={styles.sectionTitle}>Recommended Menu</Text>
 
-          {menuItems.map((item) => (
+          {restaurantMenu.map((item) => (
             <MenuItemCard
               key={item.id}
               name={item.name}
               description={item.description}
               price={item.price}
               image={item.image}
-              onAdd={handleAddToCart}
+              onAdd={() => addToCart(item)}
             />
           ))}
+
+          {restaurantMenu.length === 0 && (
+            <View style={styles.emptyBox}>
+              <Text style={styles.emptyText}>No menu items available.</Text>
+            </View>
+          )}
         </View>
       </ScrollView>
 
       <View style={styles.footer}>
-        <CustomButton title="Go to Cart" onPress={handleGoToCart} />
+        <CustomButton
+          title={cartCount > 0 ? `Go to Cart (${cartCount})` : "Go to Cart"}
+          onPress={() => navigation.navigate(ROUTES.CART)}
+        />
       </View>
     </View>
   );
@@ -115,6 +124,11 @@ const styles = StyleSheet.create({
     color: COLORS.textMuted,
     marginHorizontal: 7,
   },
+  address: {
+    ...TYPOGRAPHY.bodySmall,
+    color: COLORS.textLight,
+    marginTop: 8,
+  },
   offerCard: {
     marginTop: 22,
     marginBottom: 24,
@@ -135,6 +149,18 @@ const styles = StyleSheet.create({
     ...TYPOGRAPHY.h3,
     color: COLORS.text,
     marginBottom: 14,
+  },
+  emptyBox: {
+    padding: 20,
+    backgroundColor: COLORS.surface,
+    borderRadius: 18,
+    borderWidth: 1,
+    borderColor: COLORS.border,
+  },
+  emptyText: {
+    ...TYPOGRAPHY.body,
+    color: COLORS.textLight,
+    textAlign: "center",
   },
   footer: {
     position: "absolute",

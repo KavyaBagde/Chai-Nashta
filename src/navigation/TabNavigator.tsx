@@ -11,6 +11,7 @@ import ProfileScreen from "../screens/tabs/ProfileScreen";
 import { TabParamList } from "../types/navigation";
 import { ROUTES } from "../constants/routes";
 import { COLORS } from "../constants/colors";
+import { useOrders } from "../context/OrderContext";
 
 const Tab = createBottomTabNavigator<TabParamList>();
 
@@ -19,7 +20,8 @@ const getTabBarStyle = (route: any) => {
 
   if (
     routeName === ROUTES.RESTAURANT_DETAIL ||
-    routeName === ROUTES.CART
+    routeName === ROUTES.CART ||
+    routeName === ROUTES.ITEM_DETAIL
   ) {
     return {
       display: "none" as const,
@@ -36,7 +38,11 @@ const getTabBarStyle = (route: any) => {
 };
 
 const TabNavigator = () => {
-  const cartItemCount = 1;
+  const { orders } = useOrders();
+
+  const activeOrderCount = orders.filter(
+    (order) => order.status === "Preparing"
+  ).length;
 
   return (
     <Tab.Navigator
@@ -87,7 +93,7 @@ const TabNavigator = () => {
         component={OrdersScreen}
         options={{
           title: "Orders",
-          tabBarBadge: cartItemCount > 0 ? cartItemCount : undefined,
+          tabBarBadge: activeOrderCount > 0 ? activeOrderCount : undefined,
           tabBarBadgeStyle: {
             backgroundColor: COLORS.primary,
             color: COLORS.surface,

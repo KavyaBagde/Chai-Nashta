@@ -9,6 +9,8 @@ export const ROUTES = {
   HOME: "Home",
   RESTAURANT_DETAIL: "RestaurantDetail",
   CART: "Cart",
+  ALL_RESTAURANTS: "AllRestaurants",
+  ITEM_DETAIL: "ItemDetail",
 
   SEARCH: "Search",
   ORDERS: "Orders",
@@ -17,4 +19,8 @@ export const ROUTES = {
   MY_ORDERS: "MyOrders",
   SETTINGS: "Settings",
   HELP: "Help",
+
+  PERSONAL_INFO: "PersonalInfo",
+  ADDRESSES: "Addresses",
+  PAYMENT_METHODS: "PaymentMethods",
 } as const;

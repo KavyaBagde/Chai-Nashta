@@ -4,7 +4,11 @@ import { NavigationContainer } from "@react-navigation/native";
 
 import AuthNavigator from "./AuthNavigator";
 import DrawerNavigator from "./DrawerNavigator";
+
 import { AuthProvider, useAuth } from "../context/AuthContext";
+import { CartProvider } from "../context/CartContext";
+import { OrderProvider } from "../context/OrderContext";
+
 import { COLORS } from "../constants/colors";
 
 const RootNavigationContent = () => {
@@ -35,7 +39,11 @@ const RootNavigationContent = () => {
 const RootNavigator = () => {
   return (
     <AuthProvider>
-      <RootNavigationContent />
+      <CartProvider>
+        <OrderProvider>
+          <RootNavigationContent />
+        </OrderProvider>
+      </CartProvider>
     </AuthProvider>
   );
 };

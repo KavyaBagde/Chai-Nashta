@@ -1,41 +1,62 @@
 import React from "react";
-import { Pressable, StyleSheet, Text, View } from "react-native";
+import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
+import { DrawerActions, useNavigation } from "@react-navigation/native";
 import { Ionicons } from "@expo/vector-icons";
+
 import { COLORS } from "../../constants/colors";
 import { TYPOGRAPHY } from "../../styles/typography";
 import { globalStyles } from "../../styles/globalStyles";
-import CustomButton from "../../components/CustomButton";
-import { DrawerActions, useNavigation } from "@react-navigation/native";
+import { useAuth } from "../../context/AuthContext";
+
+import { ROUTES } from "../../constants/routes";
 
 const ProfileScreen = () => {
   const navigation = useNavigation();
+  const { logout } = useAuth();
 
   const handleOpenDrawer = () => {
-  navigation.dispatch(DrawerActions.openDrawer());
-};
+    navigation.dispatch(DrawerActions.openDrawer());
+  };
 
-  const menuItems = [
-    {
-      id: "1",
-      title: "My Orders",
-      icon: "receipt-outline",
-    },
-    {
-      id: "2",
-      title: "Settings",
-      icon: "settings-outline",
-    },
-    {
-      id: "3",
-      title: "Help",
-      icon: "help-circle-outline",
-    },
-  ];
+ const profileItems = [
+  {
+    id: "1",
+    title: "Personal Information",
+    subtitle: "Name, email and phone number",
+    icon: "person-circle-outline",
+    onPress: () => navigation.navigate(ROUTES.PERSONAL_INFO as never),
+  },
+  {
+    id: "2",
+    title: "Addresses",
+    subtitle: "Manage saved delivery addresses",
+    icon: "location-outline",
+    onPress: () => navigation.navigate(ROUTES.ADDRESSES as never),
+  },
+  {
+    id: "3",
+    title: "Payment Methods",
+    subtitle: "UPI, cards and cash options",
+    icon: "card-outline",
+    onPress: () => navigation.navigate(ROUTES.PAYMENT_METHODS as never),
+  },
+  {
+    id: "4",
+    title: "Open Menu",
+    subtitle: "More options and settings",
+    icon: "list-outline",
+    onPress: handleOpenDrawer,
+  },
+];
 
   return (
     <View style={globalStyles.screen}>
-      <View style={styles.container}>
-        <View style={styles.profileHeader}>
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={styles.scrollContent}
+      >
+        <View style={styles.orangeHeader}>
+
           <View style={styles.avatar}>
             <Text style={styles.avatarText}>K</Text>
           </View>
@@ -44,19 +65,22 @@ const ProfileScreen = () => {
           <Text style={styles.email}>kavyabagde0606@gmail.com</Text>
         </View>
 
-        <View style={styles.menuList}>
-          {menuItems.map((item) => (
-            <Pressable key={item.id} style={[globalStyles.card, styles.menuCard]}>
-              <View style={styles.menuLeft}>
-                <View style={styles.iconBox}>
-                  <Ionicons
-                    name={item.icon as keyof typeof Ionicons.glyphMap}
-                    size={22}
-                    color={COLORS.primary}
-                  />
-                </View>
+        <View style={styles.whitePanel}>
+          {profileItems.map((item) => (
+            <Pressable key={item.id} style={styles.profileRow} onPress={item.onPress}>
+              <View style={styles.rowLeft}>
+                <Ionicons
+                  name={item.icon as keyof typeof Ionicons.glyphMap}
+                  size={24}
+                  color={COLORS.text}
+                />
 
-                <Text style={styles.menuTitle}>{item.title}</Text>
+                <View style={styles.rowTextBox}>
+                  <Text style={styles.rowTitle}>{item.title}</Text>
+                  {item.subtitle ? (
+                    <Text style={styles.rowSubtitle}>{item.subtitle}</Text>
+                  ) : null}
+                </View>
               </View>
 
               <Ionicons
@@ -66,21 +90,17 @@ const ProfileScreen = () => {
               />
             </Pressable>
           ))}
+
+          <Pressable style={styles.logoutRow} onPress={logout}>
+            <View style={styles.rowLeft}>
+              <Ionicons name="log-out-outline" size={24} color={COLORS.danger} />
+              <Text style={styles.logoutText}>Logout</Text>
+            </View>
+
+            <Ionicons name="chevron-forward" size={20} color={COLORS.textMuted} />
+          </Pressable>
         </View>
-
-        <CustomButton
-          title="Open Drawer Menu"
-          onPress={handleOpenDrawer}
-          style={styles.drawerButton}
-        />
-
-        <CustomButton
-          title="Logout"
-          variant="outline"
-          onPress={() => console.log("Logout pressed")}
-          style={styles.logoutButton}
-        />
-      </View>
+      </ScrollView>
     </View>
   );
 };
@@ -88,69 +108,96 @@ const ProfileScreen = () => {
 export default ProfileScreen;
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    paddingHorizontal: 20,
-    paddingTop: 54,
+  scrollContent: {
+    paddingBottom: 30,
   },
-  profileHeader: {
-    alignItems: "center",
-    marginBottom: 34,
+  orangeHeader: {
+    backgroundColor: COLORS.primary,
+    paddingTop: 48,
+    paddingHorizontal: 24,
+    paddingBottom: 44,
+    borderBottomLeftRadius: 28,
+    borderBottomRightRadius: 28,
   },
   avatar: {
-    width: 94,
-    height: 94,
-    borderRadius: 47,
-    backgroundColor: COLORS.primary,
+    width: 86,
+    height: 86,
+    borderRadius: 43,
+    backgroundColor: COLORS.surface,
+    borderWidth: 3,
+    borderColor: "#FFE8DD",
     alignItems: "center",
     justifyContent: "center",
     marginBottom: 16,
   },
   avatarText: {
-    color: COLORS.surface,
+    color: COLORS.primary,
     fontWeight: "900",
-    fontSize: 32,
+    fontSize: 30,
   },
   name: {
     ...TYPOGRAPHY.h3,
-    color: COLORS.text,
+    color: COLORS.surface,
   },
   email: {
     ...TYPOGRAPHY.bodySmall,
-    color: COLORS.textLight,
-    marginTop: 4,
+    color: "#FFF2EA",
+    marginTop: 3,
+    fontWeight: "700",
   },
-  menuList: {
-    gap: 14,
+  whitePanel: {
+    backgroundColor: COLORS.surface,
+    marginHorizontal: 16,
+    marginTop: -24,
+    borderRadius: 22,
+    paddingVertical: 8,
+    shadowColor: COLORS.shadow,
+    shadowOpacity: 0.08,
+    shadowRadius: 14,
+    shadowOffset: {
+      width: 0,
+      height: 8,
+    },
+    elevation: 4,
   },
-  menuCard: {
-    padding: 16,
+  profileRow: {
+    paddingHorizontal: 18,
+    paddingVertical: 18,
+    borderBottomWidth: 1,
+    borderBottomColor: COLORS.border,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
   },
-  menuLeft: {
+  logoutRow: {
+    paddingHorizontal: 18,
+    paddingVertical: 18,
     flexDirection: "row",
     alignItems: "center",
+    justifyContent: "space-between",
   },
-  iconBox: {
-    width: 42,
-    height: 42,
-    borderRadius: 14,
-    backgroundColor: "#FFE8DD",
+  rowLeft: {
+    flexDirection: "row",
     alignItems: "center",
-    justifyContent: "center",
-    marginRight: 12,
+    flex: 1,
   },
-  menuTitle: {
+  rowTextBox: {
+    marginLeft: 14,
+  },
+  rowTitle: {
     ...TYPOGRAPHY.body,
     color: COLORS.text,
     fontWeight: "800",
   },
-  drawerButton: {
-    marginTop: 28,
+  rowSubtitle: {
+    ...TYPOGRAPHY.bodySmall,
+    color: COLORS.textLight,
+    marginTop: 3,
   },
-  logoutButton: {
-    marginTop: 14,
+  logoutText: {
+    ...TYPOGRAPHY.body,
+    color: COLORS.danger,
+    fontWeight: "900",
+    marginLeft: 14,
   },
 });

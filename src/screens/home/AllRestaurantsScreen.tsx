@@ -1,59 +1,42 @@
 import React, { useMemo, useState } from "react";
-import {
-  FlatList,
-  Pressable,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TextInput,
-  View,
-} from "react-native";
+import { ScrollView, StyleSheet, Text, TextInput, View } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import { useNavigation } from "@react-navigation/native";
-import { BottomTabNavigationProp } from "@react-navigation/bottom-tabs";
+import { NativeStackScreenProps } from "@react-navigation/native-stack";
 
 import { COLORS } from "../../constants/colors";
 import { ROUTES } from "../../constants/routes";
-import { categories, foodItems } from "../../constants/data";
-import { FoodCategory, TabParamList } from "../../types/navigation";
+import { categories, restaurants } from "../../constants/data";
+import { FoodCategory, RestaurantStackParamList } from "../../types/navigation";
 import { TYPOGRAPHY } from "../../styles/typography";
 import { globalStyles } from "../../styles/globalStyles";
 
 import CategoryCard from "../../components/CategoryCard";
-import FoodItemCard from "../../components/FoodItemCard";
+import RestaurantCard from "../../components/RestaurantCard";
 
-type SearchNavigationProp = BottomTabNavigationProp<TabParamList, "Search">;
+type Props = NativeStackScreenProps<
+  RestaurantStackParamList,
+  "AllRestaurants"
+>;
 
-const SearchScreen = () => {
-  const navigation = useNavigation<SearchNavigationProp>();
-
+const AllRestaurantsScreen = ({ route, navigation }: Props) => {
   const [searchText, setSearchText] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<
     FoodCategory | undefined
-  >();
+  >(route.params?.selectedCategory);
 
-  const filteredItems = useMemo(() => {
-    return foodItems.filter((item) => {
-      const matchesSearch =
-        item.name.toLowerCase().includes(searchText.toLowerCase()) ||
-        item.description.toLowerCase().includes(searchText.toLowerCase());
+  const filteredRestaurants = useMemo(() => {
+    return restaurants.filter((restaurant) => {
+      const matchesSearch = restaurant.name
+        .toLowerCase()
+        .includes(searchText.toLowerCase());
 
       const matchesCategory = selectedCategory
-        ? item.category === selectedCategory
+        ? restaurant.category === selectedCategory
         : true;
 
       return matchesSearch && matchesCategory;
     });
   }, [searchText, selectedCategory]);
-
-  const openItemDetail = (itemId: string) => {
-    navigation.navigate(ROUTES.HOME_STACK, {
-      screen: ROUTES.ITEM_DETAIL,
-      params: {
-        itemId,
-      },
-    });
-  };
 
   return (
     <View style={globalStyles.screen}>
@@ -61,61 +44,70 @@ const SearchScreen = () => {
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.scrollContent}
       >
-        <Text style={styles.title}>Search Food</Text>
-        <Text style={styles.subtitle}>Find dishes from nearby restaurants.</Text>
+        <Text style={styles.title}>All Restaurants</Text>
+        <Text style={styles.subtitle}>
+          Explore restaurants by category and search.
+        </Text>
 
         <View style={styles.searchBox}>
           <Ionicons name="search" size={20} color={COLORS.textMuted} />
           <TextInput
             value={searchText}
             onChangeText={setSearchText}
-            placeholder="Search pizza, burger, biryani..."
+            placeholder="Search restaurants"
             placeholderTextColor={COLORS.textMuted}
             style={styles.searchInput}
           />
         </View>
 
-        <View style={globalStyles.rowBetween}>
-          <Text style={styles.sectionTitle}>Categories</Text>
-
-          {selectedCategory && (
-            <Pressable onPress={() => setSelectedCategory(undefined)}>
-              <Text style={styles.clearText}>Clear</Text>
-            </Pressable>
-          )}
-        </View>
-
-        <FlatList
-          data={categories}
+        <ScrollView
           horizontal
-          keyExtractor={(item) => item.id}
           showsHorizontalScrollIndicator={false}
-          renderItem={({ item }) => (
+          style={styles.categoryRow}
+        >
+          <CategoryCard
+            name="All"
+            icon="grid-outline"
+            onPress={() => setSelectedCategory(undefined)}
+          />
+
+          {categories.map((category) => (
             <CategoryCard
-              name={item.name}
-              icon={item.icon as keyof typeof Ionicons.glyphMap}
-              onPress={() => setSelectedCategory(item.name as FoodCategory)}
+              key={category.id}
+              name={category.name}
+              icon={category.icon as keyof typeof Ionicons.glyphMap}
+              onPress={() => setSelectedCategory(category.name as FoodCategory)}
             />
-          )}
-          style={styles.categoryList}
-        />
+          ))}
+        </ScrollView>
 
         <Text style={styles.sectionTitle}>
-          {selectedCategory ? `${selectedCategory} Items` : "Popular Items"}
+          {selectedCategory ? `${selectedCategory} Restaurants` : "Restaurants"}
         </Text>
 
-        {filteredItems.map((item) => (
-          <FoodItemCard
-            key={item.id}
-            item={item}
-            onPress={() => openItemDetail(item.id)}
+        {filteredRestaurants.map((restaurant) => (
+          <RestaurantCard
+            key={restaurant.id}
+            name={restaurant.name}
+            image={restaurant.image}
+            rating={restaurant.rating}
+            time={restaurant.time}
+            price={restaurant.price}
+            cuisine={restaurant.cuisine}
+            onPress={() =>
+              navigation.navigate(ROUTES.RESTAURANT_DETAIL, {
+                restaurantId: restaurant.id,
+                restaurantName: restaurant.name,
+                price: restaurant.price,
+              })
+            }
           />
         ))}
 
-        {filteredItems.length === 0 && (
+        {filteredRestaurants.length === 0 && (
           <View style={styles.emptyBox}>
-            <Ionicons name="fast-food-outline" size={44} color={COLORS.textMuted} />
-            <Text style={styles.emptyTitle}>No items found</Text>
+            <Ionicons name="storefront-outline" size={44} color={COLORS.textMuted} />
+            <Text style={styles.emptyTitle}>No restaurants found</Text>
             <Text style={styles.emptyText}>Try another search or category.</Text>
           </View>
         )}
@@ -124,7 +116,7 @@ const SearchScreen = () => {
   );
 };
 
-export default SearchScreen;
+export default AllRestaurantsScreen;
 
 const styles = StyleSheet.create({
   scrollContent: {
@@ -151,26 +143,20 @@ const styles = StyleSheet.create({
     alignItems: "center",
     paddingHorizontal: 14,
     marginTop: 24,
-    marginBottom: 24,
+    marginBottom: 20,
   },
   searchInput: {
     flex: 1,
     marginLeft: 10,
     color: COLORS.text,
   },
+  categoryRow: {
+    marginBottom: 24,
+  },
   sectionTitle: {
     ...TYPOGRAPHY.h3,
     color: COLORS.text,
     marginBottom: 14,
-  },
-  clearText: {
-    ...TYPOGRAPHY.bodySmall,
-    color: COLORS.primary,
-    fontWeight: "800",
-    marginBottom: 14,
-  },
-  categoryList: {
-    marginBottom: 28,
   },
   emptyBox: {
     backgroundColor: COLORS.surface,

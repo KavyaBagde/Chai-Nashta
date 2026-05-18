@@ -1,15 +1,17 @@
 import React from "react";
 import { ScrollView, StyleSheet, Text, View } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
+
 import { COLORS } from "../../constants/colors";
-import { orders } from "../../constants/data";
 import { TYPOGRAPHY } from "../../styles/typography";
 import { globalStyles } from "../../styles/globalStyles";
-import OrderCard from "../../components/OrderCard";
+import { useOrders } from "../../context/OrderContext";
 
 const OrdersScreen = () => {
-  const activeOrder = orders[0];
-  const pastOrders = orders.slice(1);
+  const { orders } = useOrders();
+
+  const activeOrders = orders.filter((order) => order.status === "Preparing");
+  const pastOrders = orders.filter((order) => order.status !== "Preparing");
 
   return (
     <View style={globalStyles.screen}>
@@ -20,35 +22,78 @@ const OrdersScreen = () => {
         <Text style={styles.title}>My Orders</Text>
         <Text style={styles.subtitle}>Track your current and past orders.</Text>
 
-        <Text style={styles.sectionTitle}>Current Order</Text>
+        <Text style={styles.sectionTitle}>Current Orders</Text>
 
-        <View style={[globalStyles.card, styles.activeCard]}>
-          <View style={styles.iconCircle}>
-            <Ionicons name="bicycle" size={28} color={COLORS.surface} />
-          </View>
+        {activeOrders.length > 0 ? (
+          activeOrders.map((order) => (
+            <View key={order.id} style={[globalStyles.card, styles.activeCard]}>
+              <View style={styles.iconCircle}>
+                <Ionicons name="bicycle" size={28} color={COLORS.surface} />
+              </View>
 
-          <View style={styles.activeInfo}>
-            <Text style={styles.restaurant}>{activeOrder.restaurant}</Text>
-            <Text style={styles.activeMeta}>
-              {activeOrder.items} • ₹{activeOrder.amount}
-            </Text>
-            <Text style={styles.status}>Preparing your food</Text>
+              <View style={styles.activeInfo}>
+                <View style={globalStyles.rowBetween}>
+                  <Text style={styles.restaurant}>{order.restaurantName}</Text>
+                  <Text style={styles.status}>{order.status}</Text>
+                </View>
+
+                <Text style={styles.activeMeta}>
+                  {order.items.length > 0
+                    ? `${order.items.length} items`
+                    : "Demo order"}{" "}
+                  • ₹{order.totalAmount}
+                </Text>
+
+                <Text style={styles.date}>{order.date}</Text>
+              </View>
+            </View>
+          ))
+        ) : (
+          <View style={styles.emptyMini}>
+            <Text style={styles.emptyText}>No active orders.</Text>
           </View>
-        </View>
+        )}
 
         <Text style={styles.sectionTitle}>Past Orders</Text>
 
-        {pastOrders.map((order) => (
-          <OrderCard
-            key={order.id}
-            id={order.id}
-            restaurant={order.restaurant}
-            items={order.items}
-            amount={order.amount}
-            status={order.status}
-            date={order.date}
-          />
-        ))}
+        {pastOrders.length > 0 ? (
+          pastOrders.map((order) => (
+            <View key={order.id} style={[globalStyles.card, styles.orderCard]}>
+              <View style={globalStyles.rowBetween}>
+                <Text style={styles.orderId}>Order #{order.id}</Text>
+                <Text
+                  style={[
+                    styles.pastStatus,
+                    {
+                      color:
+                        order.status === "Delivered"
+                          ? COLORS.success
+                          : COLORS.danger,
+                    },
+                  ]}
+                >
+                  {order.status}
+                </Text>
+              </View>
+
+              <Text style={styles.restaurant}>{order.restaurantName}</Text>
+
+              <View style={globalStyles.rowBetween}>
+                <Text style={styles.activeMeta}>
+                  {order.items.length > 0
+                    ? `${order.items.length} items`
+                    : "Demo order"}{" "}
+                  • ₹{order.totalAmount}
+                </Text>
+                <Text style={styles.date}>{order.date}</Text>
+              </View>
+            </View>
+          ))
+        ) : (
+          <View style={styles.emptyMini}>
+            <Text style={styles.emptyText}>No past orders yet.</Text>
+          </View>
+        )}
       </ScrollView>
     </View>
   );
@@ -82,7 +127,7 @@ const styles = StyleSheet.create({
     padding: 18,
     flexDirection: "row",
     alignItems: "center",
-    marginBottom: 26,
+    marginBottom: 14,
     backgroundColor: "#FFE8DD",
   },
   iconCircle: {
@@ -101,6 +146,7 @@ const styles = StyleSheet.create({
     ...TYPOGRAPHY.body,
     color: COLORS.text,
     fontWeight: "800",
+    flex: 1,
   },
   activeMeta: {
     ...TYPOGRAPHY.bodySmall,
@@ -110,7 +156,37 @@ const styles = StyleSheet.create({
   status: {
     ...TYPOGRAPHY.bodySmall,
     color: COLORS.primary,
-    fontWeight: "800",
-    marginTop: 6,
+    fontWeight: "900",
+  },
+  date: {
+    ...TYPOGRAPHY.bodySmall,
+    color: COLORS.textMuted,
+    marginTop: 5,
+  },
+  orderCard: {
+    padding: 16,
+    marginBottom: 14,
+  },
+  orderId: {
+    ...TYPOGRAPHY.bodySmall,
+    color: COLORS.textLight,
+    fontWeight: "700",
+  },
+  pastStatus: {
+    ...TYPOGRAPHY.bodySmall,
+    fontWeight: "900",
+  },
+  emptyMini: {
+    backgroundColor: COLORS.surface,
+    borderRadius: 18,
+    borderWidth: 1,
+    borderColor: COLORS.border,
+    padding: 18,
+    marginBottom: 18,
+  },
+  emptyText: {
+    ...TYPOGRAPHY.bodySmall,
+    color: COLORS.textLight,
+    textAlign: "center",
   },
 });
