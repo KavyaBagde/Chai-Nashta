@@ -4,15 +4,36 @@ import { NavigationContainer } from "@react-navigation/native";
 
 import AuthNavigator from "./AuthNavigator";
 import DrawerNavigator from "./DrawerNavigator";
+import OnboardingScreen from "../screens/onboarding/OnboardingScreen";
 
 import { AuthProvider, useAuth } from "../context/AuthContext";
 import { CartProvider } from "../context/CartContext";
 import { OrderProvider } from "../context/OrderContext";
 
 import { COLORS } from "../constants/colors";
+import { ROUTES } from "../constants/routes";
+
+const linking: any = {
+  prefixes: ["foodapp://"],
+  config: {
+    screens: {
+      [ROUTES.MAIN_TABS]: {
+        screens: {
+          [ROUTES.HOME_STACK]: {
+            screens: {
+              [ROUTES.RESTAURANT_DETAIL]: {
+                path: "restaurant/:restaurantId",
+              },
+            },
+          },
+        },
+      },
+    },
+  },
+};
 
 const RootNavigationContent = () => {
-  const { isAuthenticated, isLoading } = useAuth();
+  const { isAuthenticated, isLoading, onboardingCompleted } = useAuth();
 
   if (isLoading) {
     return (
@@ -30,8 +51,14 @@ const RootNavigationContent = () => {
   }
 
   return (
-    <NavigationContainer>
-      {isAuthenticated ? <DrawerNavigator /> : <AuthNavigator />}
+    <NavigationContainer linking={linking}>
+      {isAuthenticated ? (
+        <DrawerNavigator />
+      ) : onboardingCompleted ? (
+        <AuthNavigator />
+      ) : (
+        <OnboardingScreen />
+      )}
     </NavigationContainer>
   );
 };

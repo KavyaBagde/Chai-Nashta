@@ -20,7 +20,8 @@ type Props = NativeStackScreenProps<
 >;
 
 const RestaurantDetailScreen = ({ route, navigation }: Props) => {
-  const { restaurantId, restaurantName, price } = route.params;
+  // const { restaurantId, restaurantName, price } = route.params;
+  const { restaurantId } = route.params;
   const { addToCart, cartCount } = useCart();
 
   const restaurant =
@@ -39,7 +40,7 @@ const RestaurantDetailScreen = ({ route, navigation }: Props) => {
         <Image source={{ uri: restaurant.image }} style={styles.banner} />
 
         <View style={styles.content}>
-          <Text style={styles.restaurantName}>{restaurantName}</Text>
+          <Text style={styles.restaurantName}>{restaurant.name}</Text>
 
           <View style={styles.metaRow}>
             <Ionicons name="star" size={16} color={COLORS.warning} />
@@ -47,7 +48,7 @@ const RestaurantDetailScreen = ({ route, navigation }: Props) => {
             <Text style={styles.dot}>•</Text>
             <Text style={styles.metaText}>{restaurant.time} delivery</Text>
             <Text style={styles.dot}>•</Text>
-            <Text style={styles.metaText}>Starting ₹{price}</Text>
+            <Text style={styles.metaText}>Starting ₹{restaurant.price}</Text>
           </View>
 
           <Text style={styles.address}>{restaurant.address}</Text>

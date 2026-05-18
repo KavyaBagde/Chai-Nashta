@@ -48,8 +48,8 @@ export type RestaurantStackParamList = {
 
   RestaurantDetail: {
     restaurantId: string;
-    restaurantName: string;
-    price: number;
+    restaurantName?: string;
+    price?: number;
   };
 
   ItemDetail: {

@@ -4,10 +4,21 @@ import { COLORS } from "../../constants/colors";
 import { TYPOGRAPHY } from "../../styles/typography";
 import { globalStyles } from "../../styles/globalStyles";
 import CustomButton from "../../components/CustomButton";
+import { useAuth } from "../../context/AuthContext";
+import { ROUTES } from "../../constants/routes";
+import { useNavigation } from "@react-navigation/native";
 
 const OnboardingScreen = () => {
-  const handleGetStarted = () => {
-    console.log("Get Started pressed");
+  const { finishOnboarding } = useAuth();
+  const navigation = useNavigation<any>();
+
+  const handleGetStarted = async () => {
+    await finishOnboarding();
+
+    navigation.reset({
+      index: 0,
+      routes: [{ name: ROUTES.LOGIN }],
+    });
   };
 
   return (

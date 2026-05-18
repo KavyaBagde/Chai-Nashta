@@ -75,10 +75,14 @@ const SettingsScreen = () => {
         <Pressable style={[globalStyles.card, styles.versionCard]}>
           <View>
             <Text style={styles.settingTitle}>App Version</Text>
-            <Text style={styles.settingSubtitle}>FoodieGo v1.0.0</Text>
+            <Text style={styles.settingSubtitle}>Chai Nashta v1.0.0</Text>
           </View>
 
-          <Ionicons name="information-circle-outline" size={24} color={COLORS.primary} />
+          <Ionicons
+            name="information-circle-outline"
+            size={24}
+            color={COLORS.primary}
+          />
         </Pressable>
       </View>
     </View>
