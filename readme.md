@@ -352,6 +352,9 @@ openDrawer()
 </tr>
 </table>
 
+# Demo Video 
+<a href="https://youtube.com/shorts/feo9XiCaVlY?si=C1AACIwEQIlNBOeK">Click Me</a>
+
 # 📌 Future Improvements
 
 - Backend Integration
